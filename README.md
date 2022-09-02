@@ -136,3 +136,71 @@
   #tipado
   npm i @types/pg -D
   ```
+
+## Conexión como inyectable y ejecutando un SELECT
+  - Múltiples motores de bases de datos relacionales usaremos [sequelize](https://www.npmjs.com/package/sequelize)
+  - [TypeORM](https://typeorm.io/)
+  - http://localhost:3000/tasks
+
+  Archivos:
+  ```typescript
+  // src/database/database.module.ts
+  import { Client } from 'pg';
+
+  const client = new Client({  // 👈 client
+    user: 'root',
+    host: 'localhost',
+    database: 'my_db',
+    password: '123456',
+    port: 5432,
+  });
+
+  client.connect();
+  ...
+
+  @Global()
+  @Module({
+    providers: [
+      ...
+      {
+        provide: 'PG',
+        useValue: client, // 👈 provider as value
+      },
+    ],
+    exports: ['API_KEY', 'PG'], // 👈 add in exports
+  })
+  export class DatabaseModule {}
+  ```
+  ```typescript
+  // src/app.service.ts
+  import { Client } from 'pg';
+  @Injectable()
+  export class AppService {
+    constructor(
+      @Inject('PG') private clientPg: Client, // 👈 inject PG
+      ...
+    ) {}
+
+    getTasks() { // 👈 new method
+      return new Promise((resolve, reject) => {
+        this.clientPg.query('SELECT * FROM tasks', (err, res) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(res.rows);
+        });
+      });
+    }
+  }
+  ```
+  ```typescript
+  // src/app.controller.ts
+  @Controller()
+  export class AppController {
+
+    @Get('tasks') // 👈 new endpoint
+    tasks() {
+      return this.appService.getTasks();
+    }
+  }
+  ```
