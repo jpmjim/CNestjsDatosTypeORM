@@ -125,3 +125,14 @@
     completed boolean DEFAULT false
   );
   ```
+
+## Integración de node-postgres con NestJS
+  Conexion de NestJS con la base de datos que se encuentra en Postgres utilizando el driver node para postgres **[node-postgres](https://node-postgres.com/)** y su tipado.
+
+  Instalación:
+  ```bash
+  #node-postgres
+  npm install pg
+  #tipado
+  npm i @types/pg -D
+  ```
