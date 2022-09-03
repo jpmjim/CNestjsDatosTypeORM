@@ -353,3 +353,49 @@
   })
   export class DatabaseModule {}
   ```
+
+## Creando tu primera entidad
+  TypeORM es compatible con todos los tipos de columnas compatibles con bases de datos más utilizados. Los tipos de columna son específicos del tipo de base de datos; esto proporciona más flexibilidad sobre cómo se verá el esquema de su base de datos.
+
+  - [Column types][https://typeorm.io/entities#column-types]
+  - [Active Record vs Data Mapper](https://typeorm.io/active-record-data-mapper)
+  - [Entities](https://typeorm.io/entities)
+
+  ```typescript
+  // src/products/entities/product.entity.ts
+  import { PrimaryGeneratedColumn, Column, Entity } from 'typeorm';
+
+  @Entity()
+  export class Product {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column({ type: 'varchar', length: 255, unique: true })
+    name: string;
+
+    @Column({ type: 'text' })
+    description: string;
+
+    @Column({ type: 'int' })
+    price: number;
+
+    @Column({ type: 'int' })
+    stock: number;
+
+    @Column({ type: 'varchar' })
+    image: string;
+  }
+  ```
+  ```typescript
+  // src/products/products.module.ts
+  import { TypeOrmModule } from '@nestjs/typeorm';
+  import { Product } from './entities/product.entity';
+
+  @Module({
+    imports: [TypeOrmModule.forFeature([Product])], // 👈 Include entitites
+    controllers: [ProductsController, CategoriesController, BrandsController],
+    providers: [ProductsService, BrandsService, CategoriesService],
+    exports: [ProductsService],
+  })
+  export class ProductsModule {}
+  ```
