@@ -204,3 +204,101 @@
     }
   }
   ```
+
+## Usando variables de ambiente
+  Las variables de entorno son cadenas que contienen información acerca del entorno para el sistema y el usuario que ha iniciado sesión en ese momento. Algunos programas de software usan la información para determinar dónde se colocan los archivos (como los archivos temporales).
+
+  **http://localhost:3000/users/tasks**
+
+  ```bash
+  #en los soiguientes archivos .env, .stag.env, .prod.env
+  POSTGRES_DB=my_db
+  POSTGRES_USER=nico
+  POSTGRES_PASSWORD=postgres
+  POSTGRES_PORT=5432
+  POSTGRES_HOST=localhost
+  ```
+  ```typescript
+  // src/config.ts
+  import { registerAs } from '@nestjs/config';
+  export default registerAs('config', () => {
+    return {
+      database: {
+        name: process.env.DATABASE_NAME,
+        port: process.env.DATABASE_PORT,
+      },
+      postgres: { // 👈 add config
+        dbName: process.env.POSTGRES_DB,
+        port: parseInt(process.env.POSTGRES_PORT, 10),
+        password: process.env.POSTGRES_PASSWORD,
+        user: process.env.POSTGRES_USER,
+        host: process.env.POSTGRES_HOST,
+      },
+      apiKey: process.env.API_KEY,
+    };
+  });
+  ```
+  ```typescript
+  // src/database/database.module.ts
+  import { ConfigType } from '@nestjs/config';
+  import config from '../config';
+
+  @Global()
+  @Module({
+    providers: [
+      ...
+      {
+        provide: 'PG', 
+        useFactory: (configService: ConfigType<typeof config>) => { // 👈 
+          const { user, host, dbName, password, port } = configService.postgres;
+          const client = new Client({
+            user,
+            host,
+            database: dbName,
+            password,
+            port,
+          });
+          client.connect();
+          return client;
+        },
+        inject: [config.KEY],
+      },
+    ],
+    exports: ['API_KEY', 'PG'],
+  })
+  export class DatabaseModule {}
+  ```
+  ```typescript
+  // src/users/services/users.service.ts
+  import { Client } from 'pg';
+  @Injectable()
+  export class UsersService {
+    constructor(
+      ...,
+      @Inject('PG') private clientPg: Client, // 👈 inject PG
+    ) {}
+
+    getTasks() {
+      return new Promise((resolve, reject) => {
+        this.clientPg.query('SELECT * FROM tasks', (err, res) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(res.rows);
+        });
+      });
+    }
+  }
+  ```
+  ```typescript
+  // src/users/controllers/users.controller.ts
+  @Controller('users')
+  export class UsersController {
+    
+    @Get('tasks') // 👈 new endpoint
+    getTasks() {
+      return this.usersService.getTasks();
+    }
+
+  }
+  ```
