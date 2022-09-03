@@ -399,3 +399,81 @@
   })
   export class ProductsModule {}
   ```
+
+## TypeORM: [Active Record vs. Data Mapper Pattern](https://orkhan.gitbook.io/typeorm/docs/active-record-data-mapper)
+
+  - **Active Record**
+
+  En el enfoque de TypeORM Active Record, definimos todos los métodos de consulta dentro de la propia clase del modelo . En otras palabras, podemos realizar operaciones CRUD directamente utilizando métodos modelo. 
+
+  - **Data Mapper Pattern** la cual usaremos separando responsabilidades
+
+  El patrón TypeORM Data Mapper también se conoce como el patrón Repository . En este patrón, definimos todos los métodos de consulta en clases separadas. Estas clases se conocen como repositorios. 
+
+  **Archivos**
+  ```typescript
+  // src/products/services/products.service.ts
+  import { InjectRepository } from '@nestjs/typeorm'; // 👈 import
+  import { Repository } from 'typeorm'; // 👈 import
+  import { Product } from './../entities/product.entity'; // 👈 entity
+  import { CreateProductDto, UpdateProductDto } from './../dtos/products.dtos';
+
+  @Injectable()
+  export class ProductsService {
+    constructor(
+      @InjectRepository(Product) private productRepo: Repository, // 👈 Inject
+    ) {}
+
+    findAll() {
+      return this.productRepo.find();  // 👈 use repo
+    }
+
+    findOne(id: number) {
+      const product = this.productRepo.findOne(id);  // 👈 use repo
+      if (!product) {
+        throw new NotFoundException(`Product #${id} not found`);
+      }
+      return product;
+    }
+    ...
+  }
+  ```
+
+  ```typescript
+  // src/users/services/users.service.ts
+  async getOrderByUser(id: number) {
+    const user = this.findOne(id);
+    return {
+      date: new Date(),
+      user,
+      products: await this.productsService.findAll(),
+    };
+  }
+  ```
+
+  ```typescript
+  // src/database/database.module.ts
+  @Global()
+  @Module({
+    imports: [
+      TypeOrmModule.forRootAsync({
+        inject: [config.KEY],
+        useFactory: (configService: ConfigType<typeof config>) => {
+          const { user, host, dbName, password, port } = configService.postgres;
+          return {
+            type: 'postgres',
+            host,
+            port,
+            username: user,
+            password,
+            database: dbName,
+            synchronize: true, // 👈 new attr
+            autoLoadEntities: true, // 👈 new attr
+          };
+        },
+      }),
+    ],
+    ...
+  })
+  export class DatabaseModule {}
+  ```
