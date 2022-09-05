@@ -481,3 +481,42 @@
 ## Crear, actualizar y eliminar
   Creación, actulización y eliminar un nuevo producto.
   Todas las operaciones CRUD.
+
+## Cambiar a Mysql demo (opcional)
+  La configuracion para mysql es la siguiente y de phpmyadmin:
+  ```bash
+  docker-compose up -d phpmyadmin
+  #detener un contenedor
+  docker stop "id_container"
+  #ver los contenedores solo del proyecto
+  docker-compose ps
+  #instalamos driver de mysql
+  npm i mysql2
+  ```
+  ```yaml
+  #docker-compose.yml
+  mysql:
+    image: mysql:5
+    environment:
+     - MYSQL_DATABASE=my_db
+     - MYSQL_USER=root
+     - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+     - MYSQL_ROOT_PASSWORD=123456
+     - PMA_HOST=mysql
+    ports:
+      - '8080:80'
+    depends_on:
+      - mysql
+  ```
+  Probamos nuestro PHPMyAdmin:
+  ```bash
+  http://localhost:8080/
+  ```
