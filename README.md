@@ -477,3 +477,7 @@
   })
   export class DatabaseModule {}
   ```
+
+## Crear, actualizar y eliminar
+  Creación, actulización y eliminar un nuevo producto.
+  Todas las operaciones CRUD.
