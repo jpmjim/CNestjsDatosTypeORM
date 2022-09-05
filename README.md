@@ -520,3 +520,26 @@
   ```bash
   http://localhost:8080/
   ```
+
+## Sync Mode vs. Migraciones en TypeORM
+  
+  - [Migrations](https://docs.djangoproject.com/en/3.2/topics/migrations/)
+  - [Database: Migrations](https://laravel.com/docs/9.x/migrations)
+  - [How migrations work](https://typeorm.io/migrations)
+
+  Formas de controlar los cambios en la base de datos
+  
+  ### Sync Mode
+  flag <code>synchronize: true</code> esto hace que los cambios que hagamos sobre nuestro modelo de clases impacte directamente en las tablas.
+  recomendaciones
+
+  Solo sobre entorno de desarrollo y testing. En produccion es una practica riesgosa, porque cualquier cambio en el codigo, se pueda corromper la base de datos. Para eso se crearon las migraciones
+
+  ### Django
+  Dice que las migraciones es la forma que django propaga los modelos a las bases de datos
+  
+  ### Laravel
+  Son como un control de version de la bd permitiendo que el equipo pueda definir y compartir el esquema de la base de datos.
+  
+  ### TypeORM
+  Las migraciones son solo un con query tipo sql con el esquema y los cambios aplicados (updates).
