@@ -577,3 +577,37 @@
   #comandos en la terminal para generar nuestra migracion
   npm run migration:run
   ```
+
+## Corriendo migraciones
+  Script dentro de package.json:
+  ```json
+  "scripts":{
+    #reemplazar node-commonjs por node-esm
+    "typeorm": "typeorm-ts-node-esm -d src/database/data.source.ts",
+    "migration:run": "npm run typeorm migration:run",
+    "migration:show": "npm run typeorm migration:show",
+    #no usar con cuidado drop lo borra todo
+    "migration:drop": "npm run typeorm migration:drop",
+    "migration:revert": "npm run typeorm migration:revert"
+  }
+  ```
+
+  Dentro de nuestro archivo de data.source.ts desactivemos la opcion de synchronize,
+  lo cual solo trabajaremos por medio de migraciones que cada cambio realizamos sincroniza 
+  el modelo de forma automatica.
+  ```typescript
+  return {
+    ...
+    synchronize: false,
+    ...
+  }
+  ```
+  Comandos en la terminal:
+  ```bash
+  #generamos nuestra migracion
+  npm run migration:generate
+  #corremos nuestra migracion, al ejecutar nuevamente solo correran las nuevas migraciones
+  npm run migration:run
+  #observamos la migracion corrio correctamente
+  npm run migration:show
+  ```
