@@ -543,3 +543,37 @@
   
   ### TypeORM
   Las migraciones son solo un con query tipo sql con el esquema y los cambios aplicados (updates).
+
+## Configurando migraciones y npm scripts
+  Configuración:
+  ```typescript
+  #creamos el archivo "data.source.ts" dentro de src/database/
+  import { DataSource } from 'typeorm';
+
+  export const dataSource = new DataSource({
+    type: 'postgres',
+    host: 'localhost',
+    port: 5432,
+    username: 'root',
+    password: '123456',
+    database: 'my_db',
+    logging: true,
+    synchronize: false,
+    entities: ['src/**/**/*.entity.ts'],
+    migrations: ['src/database/migrations/*.ts'],
+  });
+  ```
+
+  Script:
+  ```json
+  #dentro del package.json añadimos los siguientes scripts
+  "scripts":{
+    "typeorm": "typeorm-ts-node-commonjs -d src/database/data.source.ts",
+    "migration:generate": "npm run typeorm migration:generate src/database/migrations/migration"
+  }
+
+  Terminal:
+  ```bash
+  #comandos en la terminal para generar nuestra migracion
+  npm run migration:run
+  ```
