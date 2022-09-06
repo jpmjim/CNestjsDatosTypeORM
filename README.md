@@ -611,3 +611,42 @@
   #observamos la migracion corrio correctamente
   npm run migration:show
   ```
+
+## Modificando una entidad
+  Dentro de nuestro archivo product.entity añadireños un par de campos
+  el cual enviaremos los cambios atraves de migraciones.
+  ```typescript
+  import { 
+    PrimaryGeneratedColumn, 
+    Column, 
+    Entity, 
+    CreateDateColumn, 
+    UpdateDateColumn 
+  } from 'typeorm';
+
+  @Entity()
+  export class Product {
+    ...
+    @CreateDateColumn({
+      type: 'timestamptz',
+      default: () => 'CURRENT_TIMESTAMP',
+    })
+    createAt: Date;
+
+    @UpdateDateColumn({
+      type: 'timestamptz',
+      default: () => 'CURRENT_TIMESTAMP',
+    })
+    updateAt: Date;
+  }
+  ```
+
+  Comandos terminal:
+  ```bash
+  #generamos nuestra nueva migracion
+  npm run migration:generate src/database/migrations/add-fields
+  #corremos las migraciones
+  npm run migration:run
+  #verificamos
+  npm run migration:show
+  ``` 
