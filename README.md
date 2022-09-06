@@ -674,3 +674,12 @@
   #ver una tabla en especifico
   \d+ user
   ```
+
+## Resolviendo la relación uno a uno en el controlador
+  Creamos una nueva migracion para los cambios realizados:
+  ```bash
+  npm run migration:generate src/database/migrations/fix-ids
+  npm run migration:run
+  ```
+
+  Nos movemos a insomia o postman creamos usarios con los cambios realizados.
