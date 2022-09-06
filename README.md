@@ -650,3 +650,27 @@
   #verificamos
   npm run migration:show
   ``` 
+
+## Relaciones uno a uno: Dentro de las entidades de User y Customer
+  Uno a uno es una relación donde A contiene solo una instancia de B y B contiene solo una instancia de A. Tomemos por ejemplo User y Customer. El user puede tener un solo customer, y un solo customer es propiedad de un solo user.
+
+  @JoinColumn(): Solo debe ir a un lado maneja la referencia dentro de la base de datos, el
+  cual va cargar con la relacion en este caso en user.entity
+
+  Nueva migracion para user y customer:
+  ```bash
+  #generasmos la migracion
+  npm run migration:generate src/database/migrations/create-user-customer
+  #la corremos
+  npm run migration:run
+  ```
+
+  Conectandonos al contener:
+  ```bash
+  #al contenedor
+  docker-compose exec postgres bash
+  #a la base de datos
+  psql -h localhost -d my_db -U root
+  #ver una tabla en especifico
+  \d+ user
+  ```
