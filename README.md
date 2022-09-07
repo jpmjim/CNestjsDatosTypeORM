@@ -683,3 +683,21 @@
   ```
 
   Nos movemos a insomia o postman creamos usarios con los cambios realizados.
+
+## Relaciones uno a muchos una Marca a muchos Productos
+  Muchos a uno / uno a muchos es una relación en la que A contiene varias instancias de B, pero B contiene solo una instancia de A. Tomemos por ejemplo Marca y Prodcutos. La marca puede tener varios productos. 
+
+  - [Many-to-one / one-to-many relations](https://typeorm.io/many-to-one-one-to-many-relations)
+
+  Generamos nueva migración
+  ```bash
+  npm run migration:generate src/database/migrations/brand-to-products
+  npm run migration:run
+
+  #al contenedor
+  docker-compose exec postgres bash
+  #a la base de datos
+  psql -h localhost -d my_db -U root
+  #ver una tabla en especifico
+  \d+ user
+  ```
