@@ -701,3 +701,6 @@
   #ver una tabla en especifico
   \d+ user
   ```
+
+## Resolviendo la relación uno a muchos en el controlador
+  Saber todos los productos que tiene una marca, tambien el producto tiene relacion hacia la marca.

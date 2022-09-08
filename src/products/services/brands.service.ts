@@ -4,7 +4,7 @@ import { Brand } from '../entities/brand.entity';
 import { CreateBrandDto, UpdateBrandDto } from '../dtos/brand.dtos';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { RelationId, Repository } from 'typeorm';
 
 @Injectable()
 export class BrandsService {
@@ -15,7 +15,8 @@ export class BrandsService {
   }
 
   findOne(id: number) {
-    const product = this.brandsRepo.findOneBy({id});
+    //const product = this.brandsRepo.findOne({relations: ['products'],}); codigo del curso
+    const product = this.brandsRepo.findOne({relations: ['products'], where:{id}});
     if (!product) {
       throw new NotFoundException(`Brand #${id} not found`);
     }
