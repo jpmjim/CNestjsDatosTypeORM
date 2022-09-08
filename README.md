@@ -704,3 +704,17 @@
 
 ## Resolviendo la relación uno a muchos en el controlador
   Saber todos los productos que tiene una marca, tambien el producto tiene relacion hacia la marca.
+
+## Relaciones muchos a muchos 
+  [Many-to-many](https://typeorm.io/many-to-many-relations) es una relación en la que A contiene varias instancias de B y B contiene varias instancias de A. Tomemos por ejemplo un producto puede tener varias categorías y cada categoría puede tener varios productos. 
+
+  La relacion entre las tablas se establece una tabla terniaria en ese ejemplo se llama
+  **product_categories_category** contiene los ids.
+
+  Generamos nuestra migración:
+  ```bash
+  #generasmos la migracion
+  npm run migration:generate src/database/migrations/products-tomany-categories
+  #la corremos
+  npm run migration:run
+  ```
