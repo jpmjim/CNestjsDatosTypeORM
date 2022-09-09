@@ -718,3 +718,7 @@
   #la corremos
   npm run migration:run
   ```
+
+## Resolviendo la relación muchos a muchos en el controlador
+  Manipulacion en en los controladores.
+  Resolver el problema de findByIds que las nuevas versiones no buena practica

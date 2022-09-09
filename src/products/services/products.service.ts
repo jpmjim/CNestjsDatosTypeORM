@@ -5,23 +5,29 @@ import { CreateProductDto, UpdateProductDto } from './../dtos/products.dtos';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { BrandsService } from './brands.service';
+import { Category } from './../entities/category.entity';
+import { Brand } from './../entities/brand.entity';
+import { In } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
   constructor(
     @InjectRepository(Product) private productRepo: Repository<Product>,
-    private brandsService: BrandsService,
+    @InjectRepository(Brand) private brandRepo: Repository<Brand>,
+    @InjectRepository(Category) private categoryRepo: Repository<Category>,
   ) {}
 
   findAll() {
     return this.productRepo.find({
-      relations: ['brand'],
+      relations: ['brand', 'categories'],
     });
   }
 
   async findOne(id: number) {
-    const product = await this.productRepo.findOneBy({id});
+    const product = await this.productRepo.findOne({
+      where: {id},
+      relations: ['brand', 'categories'],
+    });
     if (!product) {
       throw new NotFoundException(`Product #${id} not found`);
     }
@@ -31,8 +37,12 @@ export class ProductsService {
   async create(data: CreateProductDto) {
     const newProduct = this.productRepo.create(data);
     if (data.brandId) {
-      const brand = await this.brandsService.findOne(data.brandId);
+      const brand = await this.brandRepo.findOneBy({id:data.brandId});
       newProduct.brand = brand;
+    }
+    if (data.categoriesIds) {
+      const categories = await this.categoryRepo.findByIds(data.categoriesIds);
+      newProduct.categories = categories;
     }
     return this.productRepo.save(newProduct);
   }
@@ -40,7 +50,7 @@ export class ProductsService {
   async update(id: number, changes: UpdateProductDto) {
     const product = await this.productRepo.findOneBy({id});
     if (changes.brandId) {
-      const brand = await this.brandsService.findOne(changes.brandId);
+      const brand = await this.brandRepo.findOneBy({id:changes.brandId});
       product.brand = brand;
     }
     this.productRepo.merge(product, changes);
