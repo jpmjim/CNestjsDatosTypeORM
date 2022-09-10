@@ -722,3 +722,15 @@
 ## Resolviendo la relación muchos a muchos en el controlador
   Manipulacion en en los controladores.
   Resolver el problema de findByIds que las nuevas versiones no buena practica
+
+## Manipulación de arreglos en relaciones muchos a muchos
+  - Remover una categoría de un producto
+    ```bash
+    # delete category by product
+    http://localhost:3000/products/7/category/2
+    ```
+  - Agregar categoría a un producto
+    ```bash
+    # add category to product
+    http://localhost:3000/products/7/category/1
+    ```
