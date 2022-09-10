@@ -734,3 +734,14 @@
     # add category to product
     http://localhost:3000/products/7/category/1
     ```
+
+## Relaciones muchos a muchos personalizadas
+  Tenemos nuestra orden de compra, donde una orden tiene muchos programas asi como muchos productos pueden pertenecer a una orden de compra usariamos many to many,
+  que pasa si en la tabla terniaria queremos agregarle un atributo mas por ejemplo la cantidad cada producto **"producto A = total, producto B = total"** necisitaremos campos customizados creando una nueva entidad. En la orden de compra.
+
+  Creamos una nueva migracion:
+  ```bash
+  npm run migration:generate src/database/migrations/orders
+  npm run migration:run
+  ```
+  Si queremos agregar mas campos a una tabla terniaria debemos añadirlo uno mismo.
